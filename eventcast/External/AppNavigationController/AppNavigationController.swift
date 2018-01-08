@@ -1,9 +1,8 @@
 //
 //  AppNavigationController.swift
-//  Cubber
 //
-//  Created by keyur on 16/07/16.
-//  Copyright © 2016 keyur. All rights reserved.
+//  Created by keyur on 5/01/18.
+//  Copyright © 2018 jTechappz. All rights reserved.
 //
 
 import UIKit
@@ -14,6 +13,7 @@ private let WIDTH_IMAGE_BUTTON: CGFloat                 = 40
     @objc optional func appNavigationController_RightMenuAction()
     @objc optional func appNavigationController_BackAction()
     @objc optional func appNavigationController_SideMenuAction()
+    @objc optional func appNavigationController_RightBackAction()
 }
 
 class AppNavigationController: UINavigationController {
@@ -42,12 +42,13 @@ class AppNavigationController: UINavigationController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.navigationBar.barTintColor = COLOUR_NAV
         self.navigationBar.isTranslucent = false;
-        self.navigationBar.tintColor = UIColor.white;
+        self.navigationBar.tintColor = UIColor.white
+       
         let dict = [NSAttributedStringKey.font:UIFont.systemFont(ofSize: 22),
-                    NSAttributedStringKey.foregroundColor:UIColor.black]
+                    NSAttributedStringKey.foregroundColor:UIColor.white]
         self.navigationBar.titleTextAttributes = dict
         
         btnWidth = 30;
@@ -63,6 +64,10 @@ class AppNavigationController: UINavigationController {
         return self.viewControllers.last!.shouldAutorotate
     }
     
+    override var preferredStatusBarStyle : UIStatusBarStyle {
+        return UIStatusBarStyle.lightContent
+      
+    }
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return self.viewControllers.last!.supportedInterfaceOrientations
     }
@@ -73,7 +78,7 @@ class AppNavigationController: UINavigationController {
         self.lblTitle = UILabel(frame: frameTitleView)
         self.lblTitle.textColor = UIColor.white
         self.lblTitle.text = title
-        self.lblTitle.font = UIFont(name: FONT_CENTURY_GOTHIC, size: 19)
+        self.lblTitle.font = UIFont.boldSystemFont(ofSize: 16)
         self.lblTitle.textAlignment = .center
         self.lblTitle.numberOfLines = 0
         //        self.lblTitle.layer.borderWidth = 1
@@ -85,6 +90,13 @@ class AppNavigationController: UINavigationController {
         let btnSideMenu = self.createImageButton("menu")
         btnSideMenu.addTarget(self, action: #selector(btnSideMenuAction), for: .touchUpInside)
         viewController.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: btnSideMenu)
+    }
+    
+    internal func setRightBackButton(){
+        let viewController: UIViewController = self.viewControllers.last!
+        let btnBack = self.createImageButton("ic_back")
+        btnBack.addTarget(self, action: #selector(btnRightBackButton), for: .touchUpInside)
+        viewController.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: btnBack)
     }
     
     internal func createImageButton(_ imageName: String) -> UIButton {
@@ -101,5 +113,8 @@ class AppNavigationController: UINavigationController {
     
     @objc internal func btnSideMenuAction() {
         self.navigationDelegate.appNavigationController_SideMenuAction!()
+    }
+    @objc internal func btnRightBackButton() {
+         self.navigationDelegate.appNavigationController_RightBackAction!()
     }
 }

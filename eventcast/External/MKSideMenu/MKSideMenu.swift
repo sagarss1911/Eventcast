@@ -2,7 +2,7 @@
 //
 //
 //  Created by keyur on 26/11/16.
-//  Copyright © 2016 jtechAppz. All rights reserved.
+//  Copyright © 2018 jtechAppz. All rights reserved.
 //
 
 let TEXT_COLOUR                          = RGBCOLOR(104, g: 104, b: 104)
@@ -33,6 +33,8 @@ class MKSideMenu: UIView, UIGestureRecognizerDelegate, UITableViewDelegate, UITa
     //MARK: PROPERTIES
     @IBOutlet var viewBG: UIView!
     @IBOutlet var tableViewList: UITableView!
+   
+    
     
     //MARK: VARIABLES
     fileprivate let obj_AppDelegate : AppDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -82,7 +84,7 @@ class MKSideMenu: UIView, UIGestureRecognizerDelegate, UITableViewDelegate, UITa
         gestureTap.delegate = self
         self.addGestureRecognizer(gestureTap)
         
-        width = frame.width * 2.8 / 4
+        width = 220
         let dict: typeAliasDictionary! = DesignModel.setConstraint_Leading_Top_ConWidth_ConHeight(subView: viewBG, superView: self, leading: (-width), top: 0, width: width, height: self.frame.height)
         self.constrintTrailing = dict[CONSTRAINT_LEADING] as! NSLayoutConstraint
         self.loadData()
@@ -165,8 +167,13 @@ class MKSideMenu: UIView, UIGestureRecognizerDelegate, UITableViewDelegate, UITa
         let dict = self.arrList[indexPath.row]
         cell.imageName.image = UIImage(named: dict[LIST_IMAGE] as! String)
         cell.lblTitle.text! = dict[LIST_TITLE] as! String
-        
+        tableViewList.separatorStyle = UITableViewCellSeparatorStyle.none
+        if indexPath.row == 7 {
+            tableViewList.separatorStyle = UITableViewCellSeparatorStyle.singleLine
+
+        }
         cell.selectionStyle = .none
+       
         return cell
     }
     
@@ -179,5 +186,55 @@ class MKSideMenu: UIView, UIGestureRecognizerDelegate, UITableViewDelegate, UITa
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(0.6 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {() -> Void in
         })
         print("You selected cell #\(indexPath.row)!")
+        if indexPath.row == 0 {
+            self.hideMenuAction()
+            obj_AppDelegate.ShowiInfoCenter()
+            print("sidemenu 0")
+        }
+        if indexPath.row == 1 {
+            self.hideMenuAction()
+            obj_AppDelegate.ShowiAgenda()
+            print("sidemenu 1")
+        }
+        if indexPath.row == 2 {
+            self.hideMenuAction()
+            obj_AppDelegate.ShowiSpeaker()
+            print("sidemenu 1")
+        }
+        if indexPath.row == 3 {
+            self.hideMenuAction()
+            obj_AppDelegate.ShowParticipants()
+            print("sidemenu 1")
+        }
+        if indexPath.row == 4 {
+            self.hideMenuAction()
+            obj_AppDelegate.ShowGallery()
+            print("sidemenu 1")
+        }
+        if indexPath.row == 5 {
+            self.hideMenuAction()
+            obj_AppDelegate.ShowSurveys()
+            print("sidemenu 1")
+        }
+        if indexPath.row == 6 {
+            self.hideMenuAction()
+            obj_AppDelegate.ShowPolls()
+            print("sidemenu 1")
+        }
+        if indexPath.row == 7 {
+            self.hideMenuAction()
+            obj_AppDelegate.ShowDownlaodCenter()
+            print("sidemenu 1")
+        }
+        if indexPath.row == 8 {
+            self.hideMenuAction()
+            obj_AppDelegate.ShowProfile()
+            print("sidemenu 1")
+        }
+        if indexPath.row == 9 {
+            self.hideMenuAction()
+            obj_AppDelegate.ShowLogout()
+            print("sidemenu 9")
+        }
     }
 }

@@ -10,6 +10,7 @@ import UIKit
 
 class HomeViewController: UIViewController, AppNavigationControllerDelegate {
     
+    @IBOutlet var lblWelcome: UILabel!
     fileprivate let arr = [typeAliasDictionary]()
     fileprivate let arr1 = [[String: AnyObject]]()
     
@@ -21,6 +22,7 @@ class HomeViewController: UIViewController, AppNavigationControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        lblWelcome.text = "Welcome \(DataModel.getUsername())"
     }
 
     override func didReceiveMemoryWarning() { super.didReceiveMemoryWarning() }
@@ -32,9 +34,11 @@ class HomeViewController: UIViewController, AppNavigationControllerDelegate {
     
     //MARK: APPNAVIGATION CONTROLLER DELEGATE
     fileprivate func setNavigationBar() {
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
         obj_AppDelegate.navigationController.setCustomTitle("Home")
         obj_AppDelegate.navigationController.setSideMenu()
         obj_AppDelegate.navigationController.navigationDelegate = self
+        
     }
     
     func appNavigationController_SideMenuAction() {
@@ -48,6 +52,27 @@ class HomeViewController: UIViewController, AppNavigationControllerDelegate {
         return arrReturn
     }
     
-
-
+    @IBAction func btnInfoCenterAction(_ sender: UIButton) {
+        let webVc = WebViewController(nibName: "WebViewController",bundle:nil)
+        webVc.page_type = K_SIDE_MENU.k_SIDE_MENU_INFO_CCENTER
+        self.navigationController?.pushViewController(webVc, animated: true)
+    }
+    
+    @IBAction func btnAgendaAction(_ sender: UIButton) {
+        let webVc = WebViewController(nibName: "WebViewController",bundle:nil)
+        webVc.page_type = K_SIDE_MENU.k_SIDE_MENU_AGENDA
+        self.navigationController?.pushViewController(webVc, animated: true)
+    }
+    
+    @IBAction func bntSurveyAction(_ sender: UIButton) {
+      let webVc = WebViewController(nibName: "WebViewController",bundle:nil)
+        webVc.page_type = K_SIDE_MENU.k_SIDE_MENU_SURVEYS
+        self.navigationController?.pushViewController(webVc, animated: true)
+    }
+    
+    @IBAction func btnPollsAction(_ sender: UIButton) {
+        let webVc = WebViewController(nibName: "WebViewController",bundle:nil)
+        webVc.page_type = K_SIDE_MENU.k_SIDE_MENU_POLLS
+        self.navigationController?.pushViewController(webVc, animated: true)
+    }
 }
