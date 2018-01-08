@@ -1,9 +1,7 @@
+
 //
-//  Cubber_Enum.swift
-//  Cubber
-//
-//  Created by keyur on 18/07/16.
-//  Copyright © 2016 keyur. All rights reserved.
+//  Created by by Keyur on 05/01/18.
+//  Copyright © 2018 jTechappz. All rights reserved.
 //
 
 import Foundation
@@ -38,14 +36,20 @@ public enum MK_RIGHT_SIDE_MENU: Int {
 }
 
 public enum K_SIDE_MENU: Int {
-    
-    case k_SIDE_MENU_QUICK_SEARCH
-    
+    case k_SIDE_MENU_INFO_CCENTER
+    case k_SIDE_MENU_AGENDA
+    case k_SIDE_MENU_SPEAKER
+    case k_SIDE_MENU_PARTICIPANTS
+    case k_SIDE_MENU_GALLERY
+    case k_SIDE_MENU_SURVEYS
+    case k_SIDE_MENU_POLLS
+    case k_SIDE_MENU_DOWNLOAD_CENTER
+    case k_SIDE_MENU_PROFILE
+    case k_SIDE_MENU_LOGOUT
 }
 
 public enum PAGE_TYPE: Int {
     case LOGIN
-   
 
 }
 
