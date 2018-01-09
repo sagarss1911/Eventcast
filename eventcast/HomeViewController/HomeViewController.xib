@@ -34,7 +34,7 @@
                             </constraints>
                         </imageView>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B9T-7y-jiM">
-                            <rect key="frame" x="10" y="86" width="355" height="150"/>
+                            <rect key="frame" x="10" y="86" width="355" height="125.5"/>
                             <subviews>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_mail" translatesAutoresizingMaskIntoConstraints="NO" id="S35-WN-Eub">
                                     <rect key="frame" x="8" y="8" width="20" height="20"/>
@@ -50,7 +50,10 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SDB-Uj-t6g">
-                                    <rect key="frame" x="8" y="36" width="339" height="106"/>
+                                    <rect key="frame" x="8" y="36" width="339" height="81.5"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="Tft-BL-cV9"/>
+                                    </constraints>
                                     <string key="text">It gives me great pleasure to welcome you to Event Cast.
 This application provides you with powerful tools to manage big events.</string>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -62,7 +65,6 @@ This application provides you with powerful tools to manage big events.</string>
                             <constraints>
                                 <constraint firstItem="SDB-Uj-t6g" firstAttribute="leading" secondItem="B9T-7y-jiM" secondAttribute="leading" constant="8" id="4tx-7M-mor"/>
                                 <constraint firstAttribute="trailing" secondItem="SDB-Uj-t6g" secondAttribute="trailing" constant="8" id="DNz-BL-8En"/>
-                                <constraint firstAttribute="height" constant="150" id="JMa-mj-pMw"/>
                                 <constraint firstItem="Pvu-cO-r5l" firstAttribute="top" secondItem="S35-WN-Eub" secondAttribute="top" id="Og0-V0-I7f"/>
                                 <constraint firstAttribute="trailing" secondItem="Pvu-cO-r5l" secondAttribute="trailing" id="Svq-uZ-IvT"/>
                                 <constraint firstAttribute="bottom" secondItem="SDB-Uj-t6g" secondAttribute="bottom" constant="8" id="kfb-y9-1RJ"/>
@@ -74,7 +76,7 @@ This application provides you with powerful tools to manage big events.</string>
                             </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gcv-Iv-t2O">
-                            <rect key="frame" x="10" y="256" width="355" height="128"/>
+                            <rect key="frame" x="10" y="231.5" width="355" height="128"/>
                             <subviews>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_link" translatesAutoresizingMaskIntoConstraints="NO" id="euG-Er-48Z">
                                     <rect key="frame" x="8" y="8" width="20" height="20"/>
