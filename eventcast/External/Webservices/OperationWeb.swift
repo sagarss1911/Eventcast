@@ -28,8 +28,7 @@ class OperationWeb: NSObject, XMLParserDelegate , NSURLConnectionDelegate , NSUR
     func callRestApi(_ url: String, methodType: METHOD_TYPE, parameters: typeAliasStringDictionary, viewActivityParent: UIView, onSuccess: @escaping (_ dictServiceContent: typeAliasDictionary) -> Void, onFailure: @escaping (_ errorCode: String) -> Void) {
         
         DesignModel.startActivityIndicator(viewActivityParent)
-        var stUrl: String = JWebService
-        stUrl = "\(stUrl)\(url)"
+        let stUrl: String = methodType == .GET ? "\(JWebService)\(url)" : JWebService
         
         var stMethodName: String = ""
         switch methodType {
@@ -42,20 +41,16 @@ class OperationWeb: NSObject, XMLParserDelegate , NSURLConnectionDelegate , NSUR
             break
             
         case .POST:
-            var stData: String = ""
-            if !parameters.isEmpty {
-                var i: Int = 0
-                for (pKey, var pValue) in parameters {
-                    let joiner: String = i == 0 ? "" : "&"
-                    stData += "\(joiner)\(pKey)=\(pValue.encode())"
-                    i += 1
-                }
+            self.theRequest = URLRequest(url: URL(string: stUrl)!)
+            do{
+                let postData = try JSONSerialization.data(withJSONObject: parameters, options: [])
+                self.theRequest.httpBody = postData
             }
-            print("call \(stMethodName)")
-            self.theRequest.httpMethod = stMethodName
+            catch{ print(error) }
+            
+            self.theRequest.httpMethod = "POST"
             self.theRequest.addValue("application/json", forHTTPHeaderField: "content-type")
             self.theRequest.addValue("no-cache", forHTTPHeaderField: "cache-control")
-            self.theRequest.httpMethod = "POST"
 
         default:
             break
