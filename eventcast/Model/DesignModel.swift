@@ -78,6 +78,8 @@ let VK_POPOVER_BORDER_WIDTH:CGFloat         = 0
 let VK_POPOVER_CORNER_RADIUS:CGFloat        = 0
 let VK_POPOVER_OUT_SIDE_CLICK_HIDDEN:Bool   = true
 //*******************************************************************************
+let TEXT_TITLE_REGISTER                     = "Creat Account"
+let TEXT_EDIT_PROFILE                       = "Edit Profile"
 
 let TAG_LAYER_TOP                           = "700"
 let TAG_LAYER_BOTTOM                        = "800"
