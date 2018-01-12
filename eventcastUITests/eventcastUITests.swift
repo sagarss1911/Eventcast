@@ -2,8 +2,8 @@
 //  eventcastUITests.swift
 //  eventcastUITests
 //
-//  Created by apple on 30/12/17.
-//  Copyright © 2017 jTechAppz. All rights reserved.
+//  Created by apple on 12/01/18.
+//  Copyright © 2018 jtechappz. All rights reserved.
 //
 
 import XCTest
