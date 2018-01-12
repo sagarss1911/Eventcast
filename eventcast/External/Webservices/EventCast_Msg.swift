@@ -16,6 +16,7 @@ let MSG_ERR_CONNECTION                      = "Sorry, connection not found."
 let MSG_TEXT_NOT_BLANK                      = "Please fill mandatory fields"
 let MEST_TEST                               = "Waiting..."
 let MSG_NO_INTERNET                         = "NO INTERNET"
-
-
+let MSG_PASSWORD_NOT_MATCH                  = "Password Not Match Plz Try Again"
+let MSG_ENTER_PROPER_CREDENTIAL             = "Plz enter proper Credential"
+let MSG_SOMETHING_WRONG                     = "Something went wrong"
 
