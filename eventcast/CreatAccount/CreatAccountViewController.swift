@@ -8,9 +8,11 @@
 
 import UIKit
 
-class CreatAccountViewController: UIViewController {
-
+class CreatAccountViewController: UIViewController,UITextFieldDelegate,AppNavigationControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, VKAlertActionViewDelegate {
+    
+    @IBOutlet var scrollViewBG: UIScrollView!
     @IBOutlet var txtEmail: UITextField!
+    @IBOutlet var lblTitle: UILabel!
     @IBOutlet var txtPassword: UITextField!
     @IBOutlet var txtConfirmPassword: UITextField!
     @IBOutlet var txtFullname: UITextField!
@@ -24,60 +26,237 @@ class CreatAccountViewController: UIViewController {
     @IBOutlet var txtHobbies: UITextField!
     @IBOutlet var txtBiography: UITextField!
     
+    @IBOutlet var btnCreatAccount: UIButton!
+     @IBOutlet var btnSaveProfile: UIButton!
+    @IBOutlet var imageProfile: UIImageView!
+    
     fileprivate let obj_AppDelegate : AppDelegate = UIApplication.shared.delegate as! AppDelegate
     fileprivate let obj_OperationWeb = OperationWeb()
     fileprivate let _VKAlertActionView = VKAlertActionView()
+    fileprivate var imagePicker = UIImagePickerController()
     
+    internal var page_type: PAGE_TYPE!
+  
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.setNavigationBarHidden(false, animated: true)
+        _VKAlertActionView.delegate = self
+        imagePicker.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.registerForKeyboardNotifications()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        switch page_type {
+        case .REGISTER:
+            btnSaveProfile.isHidden = true
+            btnCreatAccount.isHidden = false
+            lblTitle.text  = TEXT_TITLE_REGISTER
+        case .EDIT_PROFILE:
+            btnSaveProfile.isHidden = false
+            btnCreatAccount.isHidden = true
+            lblTitle.text  = TEXT_EDIT_PROFILE
+            self.callUpdateUserProfile()
+           self.setNavigationBar()
+        case .none:
+            break
+        case .some(_):
+            break
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardDidShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    fileprivate func setNavigationBar() {
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        obj_AppDelegate.navigationController.setCustomTitle("EventCast")
+        obj_AppDelegate.navigationController.setSideMenu()
+        obj_AppDelegate.navigationController.navigationDelegate = self
+        
+    }
+    func appNavigationController_SideMenuAction() {
+        let _MKSideMenu = MKSideMenu()
+        self.navigationController?.view.addSubview(_MKSideMenu)
+    }
+    
+    fileprivate func registerForKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWasShown), name: NSNotification.Name.UIKeyboardDidShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillBeHidden), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    
+    @objc internal func keyboardWasShown(_ aNotification: Notification) {
+        let info: [AnyHashable: Any] = (aNotification as NSNotification).userInfo!;
+        var keyboardRect: CGRect = ((info[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue)
+        keyboardRect = self.view.convert(keyboardRect, from: nil);
+        
+        var contentInset: UIEdgeInsets = scrollViewBG.contentInset
+        contentInset.bottom = keyboardRect.size.height
+        scrollViewBG.contentInset = contentInset
+    }
+    
+    @objc internal func keyboardWillBeHidden(_ aNotification: Notification) {
+        UIView.animate(withDuration: 0.3, delay: 0.0, options: UIViewAnimationOptions.beginFromCurrentState, animations: {
+            self.scrollViewBG.contentInset = UIEdgeInsets.zero
+        }, completion: nil)
+    }
+
+    //MARK: UITEXTFIELD DELEGATE
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == txtEmail { txtPassword.becomeFirstResponder() }
+        else if textField == txtPassword { txtConfirmPassword.becomeFirstResponder() }
+        else if textField == txtConfirmPassword { txtFullname.becomeFirstResponder() }
+        else if textField == txtFullname { txtTitle.becomeFirstResponder() }
+        else if textField == txtTitle { txtCompany.becomeFirstResponder() }
+        else if textField == txtCompany { txtYouCanCallme.becomeFirstResponder() }
+        else if textField == txtYouCanCallme { txtCity.becomeFirstResponder() }
+        else if textField == txtCity { txtCountry.becomeFirstResponder() }
+        else if textField == txtCountry { txtRigion.becomeFirstResponder() }
+        else if textField == txtRigion { txtMobile.becomeFirstResponder() }
+        else if textField == txtMobile { txtHobbies.becomeFirstResponder() }
+        else if textField == txtHobbies { txtBiography.becomeFirstResponder() }
+        else if textField == txtBiography { txtBiography.resignFirstResponder() }
+        return true}
+    
+//MARK: BUTTON ACTION
+    
     @IBAction func btnCreatAccountAction(_ sender: UIButton) {
-//        if ((txtEmail.text?.isEmpty)! || (txtPassword.text?.isEmpty)! || (txtConfirmPassword.text?.isEmpty)! || (txtFullname.text?.isEmpty)! || (txtTitle.text?.isEmpty)! || (txtCompany.text?.isEmpty)! || (txtMobile.text?.isEmpty)!  ){
-//            self._VKAlertActionView.showOkAlertView(MSG_TEXT_NOT_BLANK, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
-//        }
-//        else {
-//            self._VKAlertActionView.showOkAlertView(MEST_TEST, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
-//        }
+        DataModel.setUDID()
+        let stUdid = DataModel.getUDID()
+        if !(txtPassword.text == txtConfirmPassword.text) {
+            self._VKAlertActionView.showOkAlertView(MSG_PASSWORD_NOT_MATCH, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
+            return
+        }
         
-        var params = typeAliasStringDictionary()
-        params["image"] = ""
-        params["name"] = txtFullname.text
-        params["position"] = "writer"
-        params["company"] = txtCompany.text
-        params["callme"] = txtYouCanCallme.text
-        params["city"] = txtCity.text
-        params["country"] = txtCountry.text
-        params["region"] = txtRigion.text
-        params["mobile"] = txtMobile.text
-        params["email"] = txtEmail.text
-        params["hobbies"] = txtHobbies.text
-        params["bio"] = txtBiography.text
-        params["password"] = txtPassword.text
-        params["device_type"] = "iPhone"
-        params["device_id"] = DataModel.getUDID()
-        params["method"] = "Register"
-        print(params)
+        if ((txtEmail.text?.isEmpty)! || (txtPassword.text?.isEmpty)! || (txtConfirmPassword.text?.isEmpty)! || (txtFullname.text?.isEmpty)! || (txtTitle.text?.isEmpty)! || (txtCompany.text?.isEmpty)! || (txtMobile.text?.isEmpty)!) {
+            self._VKAlertActionView.showOkAlertView(MSG_TEXT_NOT_BLANK, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
+            return
+        }
+        else {
+            var strBase64: String = ""
+            if imageProfile.image != nil {
+                let imageData:NSData = UIImagePNGRepresentation(imageProfile.image!)! as NSData
+//                strBase64 = imageData.base64EncodedString(options: .endLineWithLineFeed)
+
+                strBase64 = imageData.base64EncodedString(options: .lineLength64Characters)
+            }
+            print(strBase64)
+            
+            let stQueryString: String = "image=\(strBase64)&name=\(txtFullname.text!)&position=\(txtTitle.text!)&company=\(txtCompany.text!)&callme=\(txtYouCanCallme.text!)&city=\(txtCity.text!)&country=\(txtCountry.text!)&region=\(txtRigion.text!)&mobile=\(txtMobile.text!)&email=\(txtEmail.text!)&hobbies=\(txtHobbies.text!)&bio=\(txtBiography.text!)&password=\(txtPassword.text!)&device_type=iPhone&device_id=\(stUdid)&method=Register"
+            
+            obj_OperationWeb.callRestApiRegister(stQueryString, methodType: .POST, parameters: typeAliasStringDictionary(), viewActivityParent: self.navigationController!.view, onSuccess: { (stServiceContent) in
+                print("fingerprint:  \(stServiceContent)")
+                DataModel.setFingerprint(stServiceContent)
+                DataModel.setIsLaunchFirstTime("1")
+                let homeVc = HomeViewController(nibName: "HomeViewController",bundle:nil)
+                self.navigationController?.pushViewController(homeVc, animated: true)
+            }, onFailure: { (errorCode) in
+                self._VKAlertActionView.showOkAlertView(MSG_ENTER_PROPER_CREDENTIAL, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
+            })
+        }
+    }
+    
+    @IBAction func btnChangeProfilePicAction(_ sender: UIButton) {
+        _VKAlertActionView.showAlertView(["Take Photo","Gallery"], message: MSG_TITLE, isIncludeCancelButton : true, alertType: .DUMMY, object: "")
+    }
+  
+    @IBAction func btnSaveAction(_ sender: UIButton) {
+        var strBase64: String = ""
+        if imageProfile.image != nil {
+            let imageData:NSData = UIImagePNGRepresentation(imageProfile.image!)! as NSData
+            strBase64 = imageData.base64EncodedString(options: .lineLength64Characters)
+        }
+//
+        let stQueryString: String = "image=\(strBase64)&name=\(txtFullname.text!)&position=\(txtTitle.text!)&company=\(txtCompany.text!)&callme=\(txtYouCanCallme.text!)&city=\(txtCity.text!)&country=\(txtCountry.text!)&region=\(txtRigion.text!)&mobile=\(txtMobile.text!)&email=\(txtEmail.text!)&hobbies=\(txtHobbies.text!)&bio=\(txtBiography.text!)&fingerprint=\(DataModel.getFingerprint())&method=UpdateProfile"
+
+        obj_OperationWeb.callRestApiRegister(stQueryString, methodType: .POST, parameters: typeAliasStringDictionary(), viewActivityParent: self.navigationController!.view, onSuccess: { (stServiceContent) in
+            print(stServiceContent)
+        }, onFailure: { (errorCode) in
+            self._VKAlertActionView.showOkAlertView(MSG_ENTER_PROPER_CREDENTIAL, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
+        })
+    }
+    
+    //MARK: Custom Button
+    func callUpdateUserProfile() {
+        let stQueryString: String = "?method=FetchProfile&fingerprint=\(DataModel.getFingerprint())"
         
-        
-        obj_OperationWeb.callRestApi(JWebService, methodType: .POST, parameters: params, viewActivityParent: self.navigationController!.view, onSuccess: { (dictServiceContent) in
+        obj_OperationWeb.callRestApi(stQueryString, methodType: .GET, parameters: typeAliasStringDictionary(), viewActivityParent: self.navigationController!.view, onSuccess: { (dictServiceContent) in
             
             print(dictServiceContent)
-            DataModel.setFingerprint(dictServiceContent[RES_fingerprint] as! String)
-            DataModel.setIsLaunchFirstTime("1")
-            DataModel.setUsername(dictServiceContent[RES_name] as! String)
-            let creatVc = HomeViewController(nibName: "HomeViewController",bundle:nil)
-            self.navigationController?.pushViewController(creatVc, animated: true)
+            DataModel.setUserInfo(dictServiceContent )
+           let userInfo: typeAliasDictionary = DataModel.getUserInfo()
+            self.txtCity.text = (userInfo[RES_city] as! String)
+            self.txtEmail.text = (userInfo[RES_email] as! String)
+            self.txtFullname.text = (userInfo[RES_name] as! String)
+            self.txtTitle.text = (userInfo[RES_position] as! String)
+            self.txtCountry.text = (userInfo[RES_country] as! String)
+            self.txtCompany.text = (userInfo[RES_company] as! String)
+            self.txtRigion.text = (userInfo[RES_region] as! String)
+            self.txtMobile.text = (userInfo[RES_mobile] as! String)
+            self.txtHobbies.text = (userInfo[RES_hobbies] as! String)
+            self.txtBiography.text = (userInfo[RES_bio] as! String)
+            self.txtYouCanCallme.text = (userInfo[RES_callme] as! String)
         }, onFailure: { (errorCode) in
             self._VKAlertActionView.showOkAlertView(MSG_ERR_LOGIN, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
         })
-        
-        
-        
+    }
+    
+    func vkAlertViewAction(_ alertType: ALERT_TYPE, buttonIndex: Int, buttonTitle: String, object: String) {
+        switch buttonIndex {
+        case 0:
+            if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                imagePicker.allowsEditing = false
+                imagePicker.sourceType = UIImagePickerControllerSourceType.camera
+                imagePicker.cameraCaptureMode = .photo
+                imagePicker.delegate = self
+                imagePicker.modalPresentationStyle = .fullScreen
+                self.present(imagePicker,animated: true,completion: nil)
+            } else {
+                _VKAlertActionView.showOkAlertView("Sorry, this device has no camera", alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
+            }
+            break
+            
+        case 1:
+            if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum){
+                print("Button capture")
+                imagePicker.delegate = self
+                imagePicker.sourceType = .savedPhotosAlbum
+                imagePicker.allowsEditing = false
+                self.present(imagePicker, animated: true, completion: nil)
+            }
+            break
+            
+        default:
+            break
+        }
+    }
+    
+    func vkActionSheetAction(_ actionSheetType: ACTION_SHEET_TYPE, buttonIndex: Int, buttonTitle: String, object: String) {
+    }
+    
+    //MARK: - IMAGEPICKER DELEGATE
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        NSLog("\(info)")
+        if (info[UIImagePickerControllerOriginalImage] as? UIImage) != nil {
+            var chosenImage = UIImage()
+            chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage
+            chosenImage = chosenImage.resizeWithPercent(percentage: 0.2)!
+            imageProfile.contentMode = .scaleAspectFit
+            imageProfile.image = chosenImage
+            dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
     }
 }
