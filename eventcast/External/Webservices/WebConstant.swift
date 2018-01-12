@@ -10,7 +10,7 @@ import Foundation
 
 let JWebService                    = "http://eventcast.doodledigital.com/ws/ws.php"
 let JMETHOD_Login                  = "Login"
-
+let BASE_URL                       = "http://eventcast.appsbydoodle.com"
 let JWebParent_URL                 = "http://eventcast.doodledigital.com/"
 let JWebChild_InfoCenter_URL       = "ws/info_sections.php"
 let JWebChild_Agenda_URL           = "ws/agenda.php?fingerprint="

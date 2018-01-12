@@ -49,8 +49,8 @@ public enum K_SIDE_MENU: Int {
 }
 
 public enum PAGE_TYPE: Int {
-    case LOGIN
-
+    case REGISTER
+    case EDIT_PROFILE
 }
 
 public enum SITE_TYPE: Int {

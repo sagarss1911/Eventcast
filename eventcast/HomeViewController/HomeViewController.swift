@@ -10,6 +10,8 @@ import UIKit
 
 class HomeViewController: UIViewController, AppNavigationControllerDelegate {
     
+   
+    @IBOutlet var lblDescription: UILabel!
     @IBOutlet var lblWelcome: UILabel!
     fileprivate let arr = [typeAliasDictionary]()
     fileprivate let arr1 = [[String: AnyObject]]()
@@ -18,11 +20,13 @@ class HomeViewController: UIViewController, AppNavigationControllerDelegate {
     internal let dict1 = [String: AnyObject]()
     
     fileprivate let obj_AppDelegate : AppDelegate = UIApplication.shared.delegate as! AppDelegate
+    fileprivate let obj_OperationWeb = OperationWeb()
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         lblWelcome.text = "Welcome \(DataModel.getUsername())"
+        self.lblDescription.numberOfLines = 0
+        self.lblDescription.text = DataModel.getHomeDetail()["welcome"] as? String
     }
 
     override func didReceiveMemoryWarning() { super.didReceiveMemoryWarning() }
@@ -31,6 +35,7 @@ class HomeViewController: UIViewController, AppNavigationControllerDelegate {
         super.viewWillAppear(animated)
         self.setNavigationBar()
     }
+    
     
     //MARK: APPNAVIGATION CONTROLLER DELEGATE
     fileprivate func setNavigationBar() {
@@ -74,5 +79,8 @@ class HomeViewController: UIViewController, AppNavigationControllerDelegate {
         let webVc = WebViewController(nibName: "WebViewController",bundle:nil)
         webVc.page_type = K_SIDE_MENU.k_SIDE_MENU_POLLS
         self.navigationController?.pushViewController(webVc, animated: true)
+    }
+    @IBAction func btnEventCastAction(_ sender: UIButton) {
+        obj_AppDelegate.openSafari()
     }
 }

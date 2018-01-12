@@ -11,6 +11,7 @@ let SET_LOGOUT                                  = "0"
 let NS_SERVICE_URL                              = "NS_SERVICE_URL"
 let NS_UDID                                     = "NS_UDID"
 let NS_USER_INFO                                = "NS_USER_INFO"
+let NS_HOME_DETAIL                              = "NS_HOME_DETAIL"
 let NS_IS_LAUNCH_FIRST_TIME                     = "NS_IS_LAUNCH_FIRST_TIME"
 let NS_SIDE_MENU                                = "NS_SIDE_MENU"
 let NS_SUB_MENU                                 = "NS_SUB_MENU"
@@ -27,22 +28,38 @@ class DataModel: NSObject {
     
     //MARK: NS USER DEFAULTS 7b3df476eea46e9f5b3a29a690260b35
     class func setFingerprint(_ Value : String) {
-        UserDefaults.standard.setValue(Value, forKey: NS_FINGERPRINT)
+        var Value1: String = Value
+        if Value1.isEmpty { Value1 = ""}
+        UserDefaults.standard.setValue(Value1, forKey: NS_FINGERPRINT)
         UserDefaults.standard.synchronize()
-    }
-    class func getFingerprint() -> String {
-        return (UserDefaults.standard.value(forKey: NS_FINGERPRINT) as! String)
-    }
-    class func setUsername(_ Value : String) {
-        UserDefaults.standard.setValue(Value, forKey: NS_USER_NAME)
-        UserDefaults.standard.synchronize()
-    }
-    class func getUsername() -> String {
-        return (UserDefaults.standard.value(forKey: NS_USER_NAME) as! String)
     }
     
-    class func setUDID(_ udid: String) {
-        UserDefaults.standard.setValue(udid, forKey:NS_UDID)
+    class func getFingerprint() -> String {
+        var finger: String = ""
+        if UserDefaults.standard.value(forKey: NS_FINGERPRINT) != nil { finger = (UserDefaults.standard.value(forKey: NS_FINGERPRINT) as! String)
+        }
+        return finger
+    }
+    
+    class func setUsername(_ Value : String) {
+        var Value1: String = Value
+        if Value1.isEmpty { Value1 = ""}
+        UserDefaults.standard.setValue(Value1, forKey: NS_USER_NAME)
+        UserDefaults.standard.synchronize()
+    }
+    
+    class func getUsername() -> String {
+        var uName: String = "EventCast"
+        if UserDefaults.standard.value(forKey: NS_USER_NAME) != nil {
+            uName = (UserDefaults.standard.value(forKey: NS_USER_NAME) as! String)
+        }
+        return uName
+    }
+    
+    class func setUDID() {
+        var udids =  UIDevice.current.identifierForVendor?.uuidString
+        if (udids?.isEmpty)! {udids? = ""}
+        UserDefaults.standard.setValue(udids, forKey:NS_UDID)
         UserDefaults.standard.synchronize()
     }
     
@@ -53,20 +70,31 @@ class DataModel: NSObject {
         }
         return udid
     }
+    
     class func getIsLaunchFirstTime() -> String {
         var stLft: String = ""
         if UserDefaults.standard.value(forKey: NS_IS_LAUNCH_FIRST_TIME) != nil {
             stLft = (UserDefaults.standard.value(forKey: NS_IS_LAUNCH_FIRST_TIME) as! String)
         }
         return stLft
-//        return (UserDefaults.standard.value(forKey: NS_IS_LAUNCH_FIRST_TIME) as! String)
     }
+    
     class func setIsLaunchFirstTime(_ Value : String) {
         UserDefaults.standard.setValue(Value, forKey: NS_IS_LAUNCH_FIRST_TIME)
         UserDefaults.standard.synchronize()
     }
     
+    class func setHomeDetail(_ dict: typeAliasDictionary) {
+        UserDefaults.standard.set(dict, forKey:NS_HOME_DETAIL)
+        UserDefaults.standard.synchronize()
+    }
     
+    class func getHomeDetail() -> typeAliasDictionary {
+        var dictUserInfo = typeAliasDictionary()
+        if UserDefaults.standard.object(forKey: NS_HOME_DETAIL) != nil { dictUserInfo = UserDefaults.standard.object(forKey: NS_HOME_DETAIL) as! typeAliasDictionary }
+        return dictUserInfo
+    }
+
     
    
     

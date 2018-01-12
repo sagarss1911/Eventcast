@@ -170,10 +170,8 @@ class MKSideMenu: UIView, UIGestureRecognizerDelegate, UITableViewDelegate, UITa
         tableViewList.separatorStyle = UITableViewCellSeparatorStyle.none
         if indexPath.row == 7 {
             tableViewList.separatorStyle = UITableViewCellSeparatorStyle.singleLine
-
         }
         cell.selectionStyle = .none
-       
         return cell
     }
     
@@ -181,7 +179,6 @@ class MKSideMenu: UIView, UIGestureRecognizerDelegate, UITableViewDelegate, UITa
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) { cell.separatorInset = UIEdgeInsets.zero; cell.preservesSuperviewLayoutMargins = false; cell.layoutMargins = UIEdgeInsets.zero }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         self.hideMenuAction()
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(0.6 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {() -> Void in
         })
