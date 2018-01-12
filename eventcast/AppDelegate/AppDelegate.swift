@@ -9,6 +9,7 @@
 import UIKit
 import UserNotifications
 import SystemConfiguration
+import SafariServices
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
@@ -136,8 +137,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
     
     func ShowProfile() {
-        let webVc = HomeViewController(nibName: "HomeViewController",bundle:nil)
-        navigationController.pushViewController(webVc, animated: true)
+        let creatVc = CreatAccountViewController(nibName: "CreatAccountViewController",bundle:nil)
+        creatVc.page_type = PAGE_TYPE.EDIT_PROFILE
+        navigationController?.pushViewController(creatVc, animated: true)
     }
     
     func ShowLogout() {
@@ -161,38 +163,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         var tokenString: String = ""
         for i in 0..<deviceToken.count { tokenString += String(format: "%02.2hhx", arguments: [tokenChars[i]]) }
         print("Device Token: \(tokenString)")
-//        Messaging.messaging().apnsToken = deviceToken
-//        Messaging.messaging().setAPNSToken(deviceToken, type: MessagingAPNSTokenType.prod)
-//        Messaging.messaging().setAPNSToken(deviceToken, type: MessagingAPNSTokenType.sandbox)
-//        print("Token : \(Messaging.messaging().fcmToken != nil ? Messaging.messaging().fcmToken! : "" )")
-//        DataModel.setUDID(Messaging.messaging().fcmToken != nil ? Messaging.messaging().fcmToken! : "@" )
-        
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("Failed to register: \(error)")
     }
-    
-//    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-//        print("Failed to register: \(error)")
-//    }
-//
-//
-//    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
-//        //        Messaging.messaging().appDidReceiveMessage(userInfo)
-//        print("Notification PayLoad : \(userInfo)")
-//    }
-//
-//    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-//        let tokenChars = (deviceToken as NSData).bytes.bindMemory(to: CChar.self, capacity: deviceToken.count)
-//        var tokenString: String = ""
-//        for i in 0..<deviceToken.count { tokenString += String(format: "%02.2hhx", arguments: [tokenChars[i]]) }
-//        print("Device Token: \(tokenString)")
-//
-//    }
-//
-//    internal func registerForPushNotifications(_ application: UIApplication) { application.registerUserNotificationSettings(UIUserNotificationSettings(types: [.badge, .sound, .alert], categories: nil)) }
-    
+
     //rechability
     func isConnectedToNetwork() -> Bool {
         var zeroAddress = sockaddr_in(sin_len: 0, sin_family: 0, sin_port: 0, sin_addr: in_addr(s_addr: 0), sin_zero: (0, 0, 0, 0, 0, 0, 0, 0))
@@ -224,6 +200,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         return ret
         
+    }
+    
+    func openSafari(){
+        if let url = URL(string: BASE_URL) {
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:])
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }
+    }
+    func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow?) -> UIInterfaceOrientationMask {
+        return UIInterfaceOrientationMask.all
     }
     
 }

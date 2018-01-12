@@ -14,7 +14,8 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HomeViewController" customModule="eventcast" customModuleProvider="target">
             <connections>
-                <outlet property="lblWelcome" destination="Pvu-cO-r5l" id="Yr7-f0-dXp"/>
+                <outlet property="lblDescription" destination="SDB-Uj-t6g" id="CEO-cm-wX8"/>
+                <outlet property="lblWelcome" destination="Pvu-cO-r5l" id="SQw-aa-guM"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -34,7 +35,7 @@
                             </constraints>
                         </imageView>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B9T-7y-jiM">
-                            <rect key="frame" x="10" y="86" width="355" height="125.5"/>
+                            <rect key="frame" x="10" y="86" width="355" height="84"/>
                             <subviews>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_mail" translatesAutoresizingMaskIntoConstraints="NO" id="S35-WN-Eub">
                                     <rect key="frame" x="8" y="8" width="20" height="20"/>
@@ -43,20 +44,18 @@
                                         <constraint firstAttribute="height" constant="20" id="m2a-SO-5ah"/>
                                     </constraints>
                                 </imageView>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="WELCOME SAGAR," textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pvu-cO-r5l">
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pvu-cO-r5l">
                                     <rect key="frame" x="36" y="8" width="319" height="20"/>
-                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
                                     <color key="textColor" red="0.18823529411764706" green="0.6705882352941176" blue="0.38431372549019605" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SDB-Uj-t6g">
-                                    <rect key="frame" x="8" y="36" width="339" height="81.5"/>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SDB-Uj-t6g">
+                                    <rect key="frame" x="8" y="36" width="339" height="40"/>
                                     <constraints>
-                                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="Tft-BL-cV9"/>
+                                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="Tft-BL-cV9"/>
                                     </constraints>
-                                    <string key="text">It gives me great pleasure to welcome you to Event Cast.
-This application provides you with powerful tools to manage big events.</string>
-                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
@@ -76,7 +75,7 @@ This application provides you with powerful tools to manage big events.</string>
                             </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gcv-Iv-t2O">
-                            <rect key="frame" x="10" y="231.5" width="355" height="128"/>
+                            <rect key="frame" x="10" y="190" width="355" height="128"/>
                             <subviews>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_link" translatesAutoresizingMaskIntoConstraints="NO" id="euG-Er-48Z">
                                     <rect key="frame" x="8" y="8" width="20" height="20"/>
@@ -290,6 +289,12 @@ This application provides you with powerful tools to manage big events.</string>
                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <nil key="highlightedColor"/>
                                 </label>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gua-rd-f8y">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
+                                    <connections>
+                                        <action selector="btnEventCastAction:" destination="-1" eventType="touchUpInside" id="Vgv-9K-7Kd"/>
+                                    </connections>
+                                </button>
                             </subviews>
                             <color key="backgroundColor" red="0.20784313725490194" green="0.66666666666666663" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
@@ -297,7 +302,11 @@ This application provides you with powerful tools to manage big events.</string>
                                 <constraint firstItem="H0Y-kf-XJD" firstAttribute="width" secondItem="esK-DD-vLd" secondAttribute="width" id="9A5-fc-p1y"/>
                                 <constraint firstItem="H0Y-kf-XJD" firstAttribute="height" secondItem="esK-DD-vLd" secondAttribute="height" id="E8Z-qc-hbJ"/>
                                 <constraint firstAttribute="height" constant="40" id="EUH-rP-mC6"/>
+                                <constraint firstAttribute="trailing" secondItem="gua-rd-f8y" secondAttribute="trailing" id="NNO-68-nWl"/>
                                 <constraint firstItem="H0Y-kf-XJD" firstAttribute="centerX" secondItem="esK-DD-vLd" secondAttribute="centerX" id="NTh-NE-6fs"/>
+                                <constraint firstItem="gua-rd-f8y" firstAttribute="top" secondItem="esK-DD-vLd" secondAttribute="top" id="OXi-TB-1YG"/>
+                                <constraint firstAttribute="bottom" secondItem="gua-rd-f8y" secondAttribute="bottom" id="j6V-od-0pT"/>
+                                <constraint firstItem="gua-rd-f8y" firstAttribute="leading" secondItem="esK-DD-vLd" secondAttribute="leading" id="yXF-p7-Cgh"/>
                             </constraints>
                         </view>
                     </subviews>
