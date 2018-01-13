@@ -1,0 +1,6 @@
+framework module Pods_eventcast {
+  umbrella header "Pods-eventcast-umbrella.h"
+
+  export *
+  module * { export * }
+}
