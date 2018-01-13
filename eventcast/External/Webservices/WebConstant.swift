@@ -20,6 +20,7 @@ let JWebChild_Survey_URL           = "ws/surveys.php?id=&fingerprint="
 let JWebChild_Polls_URL            = "ws/polls.php?fingerprint="
 let JWebChild_Download_URL         = "ws/download.php?fingerprint="
 let JWebChild_Gallery_URL          = "ws/gallery.php?fingerprint="
+let LoadImage_URL                  = "http://eventcast.doodledigital.com/assets/images/"
 
 
 //below constant not using
