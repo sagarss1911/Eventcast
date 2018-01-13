@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class CreatAccountViewController: UIViewController,UITextFieldDelegate,AppNavigationControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, VKAlertActionViewDelegate {
     
@@ -34,7 +35,7 @@ class CreatAccountViewController: UIViewController,UITextFieldDelegate,AppNaviga
     fileprivate let obj_OperationWeb = OperationWeb()
     fileprivate let _VKAlertActionView = VKAlertActionView()
     fileprivate var imagePicker = UIImagePickerController()
-    
+    var image:UIImage!
     internal var page_type: PAGE_TYPE!
   
     override func viewDidLoad() {
@@ -82,11 +83,21 @@ class CreatAccountViewController: UIViewController,UITextFieldDelegate,AppNaviga
         obj_AppDelegate.navigationController.setCustomTitle("EventCast")
         obj_AppDelegate.navigationController.setSideMenu()
         obj_AppDelegate.navigationController.navigationDelegate = self
+         obj_AppDelegate.navigationController.setRightBackButton()
         
     }
     func appNavigationController_SideMenuAction() {
         let _MKSideMenu = MKSideMenu()
         self.navigationController?.view.addSubview(_MKSideMenu)
+    }
+    func appNavigationController_RightBackAction() {
+        let homeVc = HomeViewController(nibName: "HomeViewController",bundle:nil)
+        let transition = CATransition()
+        transition.duration = 0.5
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionFade
+        self.navigationController?.view.layer.add(transition, forKey: nil)
+        self.navigationController?.pushViewController(homeVc, animated: false)
     }
     
     fileprivate func registerForKeyboardNotifications() {
@@ -145,24 +156,48 @@ class CreatAccountViewController: UIViewController,UITextFieldDelegate,AppNaviga
             var strBase64: String = ""
             if imageProfile.image != nil {
                 let imageData:NSData = UIImagePNGRepresentation(imageProfile.image!)! as NSData
-//                strBase64 = imageData.base64EncodedString(options: .endLineWithLineFeed)
-
                 strBase64 = imageData.base64EncodedString(options: .lineLength64Characters)
             }
-            print(strBase64)
+ //           print(strBase64)
+          
+            let parameters: Parameters = ["image" : "\(strBase64)","name": "\( txtFullname.text ?? "")","position":"\( txtTitle.text ?? "")", "company" : "\( txtCompany.text ?? "")","callme" : "\( txtYouCanCallme.text ?? "")","city" : "\( txtCity.text ?? "")","country" : "\( txtCountry.text ?? "")","region" : "\( txtRigion.text ?? "")","mobile" : "\(txtMobile.text ?? "")","email":"\( txtEmail.text ?? "")","hobbies" : "\(txtHobbies.text ?? "")","bio" : "\(txtBiography.text ?? "")","password":"\( txtPassword.text ?? "")","device_type" : "iPhone","device_id" : "\(stUdid)","method":"Register"]
             
-            let stQueryString: String = "image=\(strBase64)&name=\(txtFullname.text!)&position=\(txtTitle.text!)&company=\(txtCompany.text!)&callme=\(txtYouCanCallme.text!)&city=\(txtCity.text!)&country=\(txtCountry.text!)&region=\(txtRigion.text!)&mobile=\(txtMobile.text!)&email=\(txtEmail.text!)&hobbies=\(txtHobbies.text!)&bio=\(txtBiography.text!)&password=\(txtPassword.text!)&device_type=iPhone&device_id=\(stUdid)&method=Register"
-            
-            obj_OperationWeb.callRestApiRegister(stQueryString, methodType: .POST, parameters: typeAliasStringDictionary(), viewActivityParent: self.navigationController!.view, onSuccess: { (stServiceContent) in
-                print("fingerprint:  \(stServiceContent)")
-                DataModel.setFingerprint(stServiceContent)
-                DataModel.setIsLaunchFirstTime("1")
-                let homeVc = HomeViewController(nibName: "HomeViewController",bundle:nil)
-                self.navigationController?.pushViewController(homeVc, animated: true)
-            }, onFailure: { (errorCode) in
-                self._VKAlertActionView.showOkAlertView(MSG_ENTER_PROPER_CREDENTIAL, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
-            })
+                DesignModel.startActivityIndicator(self.view)
+                
+                self.request = Alamofire.request(JWebService, method: .post, parameters:parameters)
+                if let request = request as? DataRequest {
+                    request.responseString { response in
+                        switch response.result {
+                        case .success:
+                            DesignModel.stopActivityIndicator()
+                            print(response)
+                            print("dictResponse")
+                            if let JSON = response.result.value {
+                                print(JSON)
+                                if JSON .contains("error") {
+                                    self._VKAlertActionView.showOkAlertView(MSG_ENTER_PROPER_CREDENTIAL, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
+                                }else {
+                                    DataModel.setFingerprint(JSON)
+                                    let homeVc = HomeViewController(nibName: "HomeViewController",bundle:nil)
+                                    self.navigationController?.pushViewController(homeVc, animated: true)
+                                }
+                            }
+                        case .failure(let error):
+                            print(error)
+                            DesignModel.stopActivityIndicator()
+                            self._VKAlertActionView.showOkAlertView(MSG_SOMETHING_WRONG, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
+                        }
+                        
+                    }
+                }
         }
+    }
+    
+    var request: Alamofire.Request? {
+        didSet {
+            //oldValue?.cancel()
+        }
+        
     }
     
     @IBAction func btnChangeProfilePicAction(_ sender: UIButton) {
@@ -170,19 +205,54 @@ class CreatAccountViewController: UIViewController,UITextFieldDelegate,AppNaviga
     }
   
     @IBAction func btnSaveAction(_ sender: UIButton) {
+        if !(txtPassword.text == txtConfirmPassword.text) {
+            self._VKAlertActionView.showOkAlertView(MSG_PASSWORD_NOT_MATCH, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
+            return
+        }
+        
+        if ((txtEmail.text?.isEmpty)! || (txtPassword.text?.isEmpty)! || (txtConfirmPassword.text?.isEmpty)! || (txtFullname.text?.isEmpty)! || (txtTitle.text?.isEmpty)! || (txtCompany.text?.isEmpty)! || (txtMobile.text?.isEmpty)!) {
+            self._VKAlertActionView.showOkAlertView(MSG_TEXT_NOT_BLANK, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
+            return
+        }
+        else {
         var strBase64: String = ""
+        let stFinger = DataModel.getFingerprint()
         if imageProfile.image != nil {
             let imageData:NSData = UIImagePNGRepresentation(imageProfile.image!)! as NSData
             strBase64 = imageData.base64EncodedString(options: .lineLength64Characters)
         }
-//
-        let stQueryString: String = "image=\(strBase64)&name=\(txtFullname.text!)&position=\(txtTitle.text!)&company=\(txtCompany.text!)&callme=\(txtYouCanCallme.text!)&city=\(txtCity.text!)&country=\(txtCountry.text!)&region=\(txtRigion.text!)&mobile=\(txtMobile.text!)&email=\(txtEmail.text!)&hobbies=\(txtHobbies.text!)&bio=\(txtBiography.text!)&fingerprint=\(DataModel.getFingerprint())&method=UpdateProfile"
+        
+        let parameters: Parameters = ["image" : "\(strBase64)","name": "\( txtFullname.text ?? "")","position":"\( txtTitle.text ?? "")", "company" : "\( txtCompany.text ?? "")","callme" : "\( txtYouCanCallme.text ?? "")","city" : "\( txtCity.text ?? "")","country" : "\( txtCountry.text ?? "")","region" : "\( txtRigion.text ?? "")","mobile" : "\(txtMobile.text ?? "")","email":"\( txtEmail.text ?? "")","hobbies" : "\(txtHobbies.text ?? "")","bio" : "\(txtBiography.text ?? "")","device_type" : "iPhone","password":"\( txtPassword.text ?? "")","fingerprint" : "\(stFinger)","method":"UpdateProfile"]
+        
+        DesignModel.startActivityIndicator(self.view)
+        
+        self.request = Alamofire.request(JWebService, method: .post, parameters:parameters)
+        if let request = request as? DataRequest {
+            request.responseString { response in
+                switch response.result {
+                case .success:
+                    DesignModel.stopActivityIndicator()
+                    print(response)
+                    print("dictResponse")
+                    if let JSON = response.result.value {
+                        print(JSON)
+                        if JSON .contains("error") {
+                            self._VKAlertActionView.showOkAlertView(MSG_ENTER_PROPER_CREDENTIAL, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
+                        }else {
+                            let homeVc = HomeViewController(nibName: "HomeViewController",bundle:nil)
+                            self.navigationController?.pushViewController(homeVc, animated: true)
+                        }
+                    }
+                case .failure(let error):
+                    print(error)
+                    DesignModel.stopActivityIndicator()
+                    self._VKAlertActionView.showOkAlertView(MSG_SOMETHING_WRONG, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
+                }
+                
+            }
+        }
+    }
 
-        obj_OperationWeb.callRestApiRegister(stQueryString, methodType: .POST, parameters: typeAliasStringDictionary(), viewActivityParent: self.navigationController!.view, onSuccess: { (stServiceContent) in
-            print(stServiceContent)
-        }, onFailure: { (errorCode) in
-            self._VKAlertActionView.showOkAlertView(MSG_ENTER_PROPER_CREDENTIAL, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
-        })
     }
     
     //MARK: Custom Button
@@ -205,9 +275,14 @@ class CreatAccountViewController: UIViewController,UITextFieldDelegate,AppNaviga
             self.txtHobbies.text = (userInfo[RES_hobbies] as! String)
             self.txtBiography.text = (userInfo[RES_bio] as! String)
             self.txtYouCanCallme.text = (userInfo[RES_callme] as! String)
+//            let stImageName : String = (userInfo[RES_image] as! String)
+//            let baseURL : String = LoadImage_URL + stImageName
+//            self.imageProfile.image = self.setImageFromURl(baseURL)
         }, onFailure: { (errorCode) in
             self._VKAlertActionView.showOkAlertView(MSG_ERR_LOGIN, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
         })
+       
+       
     }
     
     func vkAlertViewAction(_ alertType: ALERT_TYPE, buttonIndex: Int, buttonTitle: String, object: String) {
@@ -259,4 +334,15 @@ class CreatAccountViewController: UIViewController,UITextFieldDelegate,AppNaviga
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
     }
+     //MARK: Load Image
+    //(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool
+//    func setImageFromURl(_ stringImageUrl : String) -> UIImage{
+//        var img:UIImage!
+//        if let url = NSURL(string: stringImageUrl) {
+//            if let data = NSData(contentsOf: url as URL) {
+//                img = UIImage(data: data as Data)!
+//            }
+//        }
+//        return img
+//    }
 }

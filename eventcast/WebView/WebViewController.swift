@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class WebViewController: UIViewController,AppNavigationControllerDelegate, UIWebViewDelegate, VKPopoverDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, VKAlertActionViewDelegate {
 
@@ -21,10 +22,11 @@ class WebViewController: UIViewController,AppNavigationControllerDelegate, UIWeb
     fileprivate var _VKPopover = VKPopover()
     fileprivate var imagePicker = UIImagePickerController()
     fileprivate var strBase64: String = ""
-    
+    fileprivate var stImageCaptiontext: String = ""
     internal var url: String!
     internal var page_type: K_SIDE_MENU!
     var refController:UIRefreshControl = UIRefreshControl()
+    var isUploadingImage = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -86,6 +88,7 @@ class WebViewController: UIViewController,AppNavigationControllerDelegate, UIWeb
     
     @IBAction func btnViewImage_OkAction() {
         _VKPopover.closeVKPopoverAction()
+        stImageCaptiontext = txtImageTitle.text!
 //
 //            .add("caption", encoded_caption)
 //            .add("image", image)
@@ -109,63 +112,63 @@ class WebViewController: UIViewController,AppNavigationControllerDelegate, UIWeb
             case .k_SIDE_MENU_INFO_CCENTER:
                 let baseURL : String = JWebParent_URL + JWebChild_InfoCenter_URL
                 let MyURL = URL.init(string: baseURL)
-                let request = URLRequest(url:MyURL!)
-                webViewAll.loadRequest(request)
+                let loadUrl = URLRequest(url:MyURL!)
+                webViewAll.loadRequest(loadUrl)
                 
             case .k_SIDE_MENU_AGENDA:
                 let baseURL : String = JWebParent_URL + JWebChild_Agenda_URL + DataModel.getFingerprint()
                 let agendaUrl :String = baseURL
-                print(agendaUrl)
                 let MyURL = URL.init(string: agendaUrl)
-                let request = URLRequest(url:MyURL!)
-                webViewAll.loadRequest(request)
+                let loadUrl = URLRequest(url:MyURL!)
+                webViewAll.loadRequest(loadUrl)
                 
             case .k_SIDE_MENU_SPEAKER:
                 let baseURL : String = JWebParent_URL + JWebChild_Speaker_URL
                 let MyURL = URL.init(string: baseURL )
-                let request = URLRequest(url:MyURL!)
-                webViewAll.loadRequest(request)
+                let loadUrl = URLRequest(url:MyURL!)
+                webViewAll.loadRequest(loadUrl)
                 
             case .k_SIDE_MENU_PROFILE:
                 print("k_SIDE_MENU_PROFILE")
                 
             case .k_SIDE_MENU_GALLERY:
+                if isUploadingImage == true { break }
                 let stPhoto: String = DataModel.getHomeDetail()["photo"] as! String
                 btnAddPhoto.isHidden = stPhoto == "1" ? false : true
                 let baseURL : String = JWebParent_URL + JWebChild_Gallery_URL + DataModel.getFingerprint()
                 let galeryURL : String = baseURL
                 let MyURL = URL.init(string: galeryURL )
-                let request = URLRequest(url:MyURL!)
-                webViewAll.loadRequest(request)
+                let loadUrl = URLRequest(url:MyURL!)
+                webViewAll.loadRequest(loadUrl)
                 
             case .k_SIDE_MENU_SURVEYS:
                 let baseURL : String = JWebParent_URL + JWebChild_Survey_URL + DataModel.getFingerprint()
                 let surveyURL : String = baseURL
                 let MyURL = URL.init(string: surveyURL )
-                let request = URLRequest(url:MyURL!)
-                webViewAll.loadRequest(request)
+                let loadUrl = URLRequest(url:MyURL!)
+                webViewAll.loadRequest(loadUrl)
                 
             case .k_SIDE_MENU_PARTICIPANTS:
                 let baseURL : String = JWebParent_URL + JWebChild_Participents_URL
                 let MyURL = URL.init(string: baseURL )
-                let request = URLRequest(url:MyURL!)
-                webViewAll.loadRequest(request)
+                let loadUrl = URLRequest(url:MyURL!)
+                webViewAll.loadRequest(loadUrl)
                 
             case .k_SIDE_MENU_POLLS:
                 let baseURL : String = JWebParent_URL + JWebChild_Polls_URL + DataModel.getFingerprint()
                 let pollsURL : String = baseURL
                 print(pollsURL)
                 let MyURL = URL.init(string: pollsURL )
-                let request = URLRequest(url:MyURL!)
-                webViewAll.loadRequest(request)
+                let loadUrl = URLRequest(url:MyURL!)
+                webViewAll.loadRequest(loadUrl)
                 
             case .k_SIDE_MENU_DOWNLOAD_CENTER:
                 let baseURL : String = JWebParent_URL + JWebChild_Download_URL + DataModel.getFingerprint()
                 let downloadURL : String = baseURL
                 print(downloadURL)
                 let MyURL = URL.init(string: downloadURL )
-                let request = URLRequest(url:MyURL!)
-                webViewAll.loadRequest(request)
+                let loadUrl = URLRequest(url:MyURL!)
+                webViewAll.loadRequest(loadUrl)
                 
             case .k_SIDE_MENU_LOGOUT:
                 let loginVc = LoginViewController(nibName: "LoginViewController",bundle:nil)
@@ -247,15 +250,62 @@ class WebViewController: UIViewController,AppNavigationControllerDelegate, UIWeb
     
     //MARK: - IMAGEPICKER DELEGATE
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+         self.isUploadingImage = true
         var chosenImage = UIImage()
         chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage
         chosenImage = chosenImage.resizeWithPercent(percentage: 0.6)!
         let imageData:NSData = UIImagePNGRepresentation(chosenImage)! as NSData
         strBase64 = imageData.base64EncodedString(options: .lineLength64Characters)
         dismiss(animated:true, completion: nil)
+        let stFinger = DataModel.getFingerprint()
+        
+        let parameters: Parameters = ["image" : "\(strBase64)","caption":"\(stImageCaptiontext)","fingerprint" : "\(stFinger)","method":"UploadImage"]
+        
+        DesignModel.startActivityIndicator(self.view)
+        
+        self.request = Alamofire.request(JWebService, method: .post, parameters:parameters)
+        if let request = request as? DataRequest {
+            request.responseString { response in
+                switch response.result {
+                case .success:
+                    DesignModel.stopActivityIndicator()
+                    print(response)
+                    print("dictResponse")
+                    if let JSON = response.result.value {
+                        print(JSON)
+                        if JSON .contains("success") {
+                     
+                            self._VKAlertActionView.showOkAlertView(MSG_SUCCESS_UPLOAD_IMAGE, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
+                            self.webViewAll.reload()
+                            self.isUploadingImage = false
+                            
+                        }else {
+                             self._VKAlertActionView.showOkAlertView(MSG_SOMETHING_WRONG, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
+                             self.isUploadingImage = false
+                        }
+                    }
+                case .failure(let error):
+                    print(error)
+                    
+                    DesignModel.stopActivityIndicator()
+                    self._VKAlertActionView.showOkAlertView(MSG_SOMETHING_WRONG, alertType: ALERT_TYPE.DUMMY, object: "", isCallDelegate: false)
+                     self.isUploadingImage = false
+                }
+                
+            }
+        }
     }
+    
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
+        isUploadingImage == false
+    }
+    
+    var request: Alamofire.Request? {
+        didSet {
+            //oldValue?.cancel()
+        }
+        
     }
 }
